@@ -1,0 +1,261 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Wish master</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+          integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+    <style>
+        .darkTheme {
+            color: white;
+            background-color: #353535;
+            height: 100vh;
+        }
+
+        .main-title {
+            padding-top: 24px;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: auto auto;
+            grid-column-gap: 16px;
+        }
+
+        .img {
+            cursor: pointer;
+            transition: 0.5s;
+        }
+
+        .img:hover {
+            cursor: pointer;
+            opacity: 0.5;
+        }
+
+    </style>
+
+</head>
+<body>
+
+<div class="darkTheme">
+    <div class="container">
+        <div class="main-title text-align-center">
+            <h2>Birthday Master</h2>
+        </div>
+
+        <div class="pictures grid">
+            <img class="img" id="img1" width="100%" alt="" onclick="chooseImage('first')">
+            <img class="img" id="img2" width="100%" alt="" onclick="chooseImage('second')">
+        </div>
+
+        <button id="startbtn" onclick="start()">
+            click
+        </button>
+
+        <div id="result"></div>
+    </div>
+
+</div>
+
+
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+        integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+        crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+        integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+        crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+        integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+        crossorigin="anonymous"></script>
+
+<script>
+
+
+    let wishes =
+        [
+            {
+                code: "ticket",
+                description: "Ticket to any place",
+            },
+            {
+                code: "parachute",
+                description: "Parachute jump",
+            },
+            {
+                code: "laptop",
+                description: "New laptop",
+            },
+            {
+                code: "microphone",
+                description: "Professional microphone",
+            },
+            {
+                code: "license",
+                description: "Driving license"
+            },
+            {
+                code: "studio",
+                description: "Video studio toolkit",
+            },
+            {
+                code: "vocal",
+                description: "Vocal course",
+            },
+            {
+                code: "makeup",
+                description: "Make up course",
+            },
+            {
+                code: "ikea",
+                description: "15k in Ikea",
+            },
+            {
+                code: "wine",
+                description: "Toolkit for craft wine",
+            }
+        ]
+
+
+    let chosenWish_1 = []
+    let chosenWish_2 = []
+    let chosenWish_3 = []
+    let chosenWish_4 = []
+
+    let round = 1
+
+    let pointer1 = 0
+    let pointer2 = 0
+    let pointer3 = 0
+    let pointer4 = 0
+
+    let trigger = true
+
+    let start = () => {
+
+        document.getElementById("startbtn").style.display = "none"
+
+        try {
+            document.getElementById("img1").src = `img/${wishes[pointer1].code + round}.jpg`
+        } catch {
+            document.getElementById("img1").src = `img/${wishes[pointer1].code + round}.png`
+        }
+
+        try {
+            document.getElementById("img2").src = `img/${wishes[pointer1 + 1].code + round}.jpg`
+        } catch {
+            document.getElementById("img2").src = `img/${wishes[pointer1 + 1].code + round}.png`
+        }
+    }
+    git@github.com:gizzal/birthdayGenerator.git
+
+    let generateImage = (param, pointer) => {
+
+        try {
+            document.getElementById("img1").src = `img/${param[pointer].code + round}.jpg`
+        } catch {
+            document.getElementById("img1").src = `img/${param[pointer].code + round}.png`
+        }
+
+        try {
+            `img/${param[pointer].code + round}.jpg`
+            document.getElementById("img2").src = `img/${param[pointer + 1].code + round}.jpg`
+        } catch {
+            document.getElementById("img2").src = `img/${param[pointer + 1].code + round}.png`
+        }
+    }
+
+
+    let chooseImage = (decision) => {
+        if (round === 1) {
+            if (decision === "first") {
+                chosenWish_1.push(wishes[pointer1])
+            } else {
+                chosenWish_1.push(wishes[pointer1 + 1])
+            }
+            pointer1 = pointer1 + 2
+            console.log(round, pointer1)
+            console.log(chosenWish_1)
+            if (pointer1 > 8) {
+                round = round + 1
+                console.log("wtf")
+                trigger = false;
+            } else {
+                generateImage(wishes, pointer1)
+            }
+        }
+
+        if (round === 2) {
+            if (trigger === false) {
+                generateImage(chosenWish_1, pointer2)
+                trigger = true
+                return;
+            }
+            if (decision === "first") {
+                chosenWish_2.push(chosenWish_1[pointer2])
+            } else {
+                chosenWish_2.push(chosenWish_1[pointer2 + 1])
+            }
+            pointer2 = pointer2 + 2
+            console.log(round, pointer2)
+            console.log(chosenWish_2)
+            if (pointer2 > 2) {
+                round = round + 1
+                console.log("wtf")
+            } else {
+                generateImage(chosenWish_1, pointer2)
+            }
+
+        }
+
+        if (round === 3) {
+            if (decision === "first") {
+                chosenWish_3.push(chosenWish_2[pointer3])
+            } else {
+                chosenWish_3.push(chosenWish_2[pointer3 + 1])
+            }
+            pointer3 = pointer3 + 2
+        }
+
+        if (round === 4) {
+            if (decision === "first") {
+                chosenWish_4.push(chosenWish_3[pointer4])
+            } else {
+                chosenWish_4.push(chosenWish_3[pointer4 + 1])
+            }
+            pointer3 = pointer3 + 2
+        }
+
+
+        // chosenImage = document.getElementById("img1").src
+        // console.log(chosenImage)
+
+    }
+
+
+    let chooseImage2 = () => {
+        chosenWish_1.push(wishes[pointer + 1])
+        pointer = pointer + 2
+        // chosenImage = document.getElementById("img1").src
+        // console.log(chosenImage)
+        try {
+            document.getElementById("img1").src = `img/${wishes[pointer].code + round}.jpg`
+        } catch {
+            document.getElementById("img1").src = `img/${wishes[pointer].code + round}.png`
+        }
+
+        try {
+            document.getElementById("img2").src = `img/${wishes[pointer + 1].code + round}.jpg`
+        } catch {
+            document.getElementById("img2").src = `img/${wishes[pointer + 1].code + round}.png`
+        }
+    }
+
+
+</script>
+
+</body>
+</html>
