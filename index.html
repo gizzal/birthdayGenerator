@@ -48,13 +48,11 @@
         </div>
 
         <div class="pictures grid">
-            <img class="img" id="img1" width="100%" alt="" onclick="chooseImage('first')">
-            <img class="img" id="img2" width="100%" alt="" onclick="chooseImage('second')">
+            <img class="img" id="img1" width="100%" alt="" onclick="selectWish('first')">
+            <img class="img" id="img2" width="100%" alt="" onclick="selectWish('second')">
         </div>
 
-        <button id="startbtn" onclick="start()">
-            click
-        </button>
+        <button id="startbtn" onclick="start()"> click</button>
 
         <div id="result"></div>
     </div>
@@ -119,139 +117,84 @@
             }
         ]
 
+    let storedWishes = []
+    let imageSet = 1
+    let pointer = 0
+    let decision = null
 
-    let chosenWish_1 = []
-    let chosenWish_2 = []
-    let chosenWish_3 = []
-    let chosenWish_4 = []
-
-    let round = 1
-
-    let pointer1 = 0
-    let pointer2 = 0
-    let pointer3 = 0
-    let pointer4 = 0
-
-    let trigger = true
+    let finalResult = null
 
     let start = () => {
-
         document.getElementById("startbtn").style.display = "none"
-
-        try {
-            document.getElementById("img1").src = `img/${wishes[pointer1].code + round}.jpg`
-        } catch {
-            document.getElementById("img1").src = `img/${wishes[pointer1].code + round}.png`
-        }
-
-        try {
-            document.getElementById("img2").src = `img/${wishes[pointer1 + 1].code + round}.jpg`
-        } catch {
-            document.getElementById("img2").src = `img/${wishes[pointer1 + 1].code + round}.png`
-        }
+        generateImages(wishes)
     }
-    git@github.com:gizzal/birthdayGenerator.git
 
-    let generateImage = (param, pointer) => {
+    let checkImageExist = (image_url) => {
+        let http = new XMLHttpRequest();
+        http.open('HEAD', image_url, false);
+        http.send();
+        return http.status !== 404;
+    }
 
-        try {
-            document.getElementById("img1").src = `img/${param[pointer].code + round}.jpg`
-        } catch {
-            document.getElementById("img1").src = `img/${param[pointer].code + round}.png`
-        }
-
-        try {
-            `img/${param[pointer].code + round}.jpg`
-            document.getElementById("img2").src = `img/${param[pointer + 1].code + round}.jpg`
-        } catch {
-            document.getElementById("img2").src = `img/${param[pointer + 1].code + round}.png`
+    let generateImage = (wish, pointer, id) => {
+        let url = `img/${wish[pointer].code + imageSet}.`
+        if (checkImageExist(url + "jpg")) {
+            document.getElementById(id).src = url + "jpg"
+        } else {
+            document.getElementById(id).src = url + "png"
         }
     }
 
+    let generateImages = (wish) => {
+        console.log(wish, pointer, imageSet)
+        generateImage(wish, pointer, "img1")
+        generateImage(wish, pointer + 1, "img2")
+    }
 
-    let chooseImage = (decision) => {
-        if (round === 1) {
-            if (decision === "first") {
-                chosenWish_1.push(wishes[pointer1])
-            } else {
-                chosenWish_1.push(wishes[pointer1 + 1])
-            }
-            pointer1 = pointer1 + 2
-            console.log(round, pointer1)
-            console.log(chosenWish_1)
-            if (pointer1 > 8) {
-                round = round + 1
-                console.log("wtf")
-                trigger = false;
-            } else {
-                generateImage(wishes, pointer1)
-            }
+    let storeDecision = (wish, storeWish) => {
+        if (decision === "first") {
+            storeWish.push(wish[pointer])
+        }
+        if (decision === "second") {
+            storeWish.push(wish[pointer + 1])
+        }
+    }
+
+    let storeCustomDecision = (wish, storeWish, customPointer) => {
+        storeWish.push(wish[customPointer])
+    }
+
+    let startSets = () => {
+        if (decision !== null) {
+            storeDecision(wishes, storedWishes)
+            pointer = pointer + 2
         }
 
-        if (round === 2) {
-            if (trigger === false) {
-                generateImage(chosenWish_1, pointer2)
-                trigger = true
-                return;
-            }
-            if (decision === "first") {
-                chosenWish_2.push(chosenWish_1[pointer2])
-            } else {
-                chosenWish_2.push(chosenWish_1[pointer2 + 1])
-            }
-            pointer2 = pointer2 + 2
-            console.log(round, pointer2)
-            console.log(chosenWish_2)
-            if (pointer2 > 2) {
-                round = round + 1
-                console.log("wtf")
-            } else {
-                generateImage(chosenWish_1, pointer2)
-            }
-
+        if (wishes.length-2 === -1) {
+            finalResult = wishes[0].description
+            document.getElementById("result").innerHTML=`${finalResult}`
+            return
         }
 
-        if (round === 3) {
-            if (decision === "first") {
-                chosenWish_3.push(chosenWish_2[pointer3])
-            } else {
-                chosenWish_3.push(chosenWish_2[pointer3 + 1])
+        if (pointer > wishes.length - 2) {
+            if (wishes.length % 2 !== 0) {
+                storeCustomDecision(wishes, storedWishes, wishes.length - 1)
             }
-            pointer3 = pointer3 + 2
+            imageSet = imageSet + 1
+            pointer = 0
+            decision = null
+            wishes = storedWishes
+            storedWishes = []
+            startSets()
+        } else {
+            generateImages(wishes)
         }
-
-        if (round === 4) {
-            if (decision === "first") {
-                chosenWish_4.push(chosenWish_3[pointer4])
-            } else {
-                chosenWish_4.push(chosenWish_3[pointer4 + 1])
-            }
-            pointer3 = pointer3 + 2
-        }
-
-
-        // chosenImage = document.getElementById("img1").src
-        // console.log(chosenImage)
 
     }
 
-
-    let chooseImage2 = () => {
-        chosenWish_1.push(wishes[pointer + 1])
-        pointer = pointer + 2
-        // chosenImage = document.getElementById("img1").src
-        // console.log(chosenImage)
-        try {
-            document.getElementById("img1").src = `img/${wishes[pointer].code + round}.jpg`
-        } catch {
-            document.getElementById("img1").src = `img/${wishes[pointer].code + round}.png`
-        }
-
-        try {
-            document.getElementById("img2").src = `img/${wishes[pointer + 1].code + round}.jpg`
-        } catch {
-            document.getElementById("img2").src = `img/${wishes[pointer + 1].code + round}.png`
-        }
+    let selectWish = (pickedDecision) => {
+        decision = pickedDecision
+        startSets()
     }
 
 
