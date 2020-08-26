@@ -9,11 +9,14 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
           integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
 
+    <link rel="stylesheet" href="spark/spark.css">
+
     <style>
         .darkTheme {
             color: white;
             background-color: #353535;
-            height: 100vh;
+            min-height: 100vh;
+            padding-top: 64px;
         }
 
         .main-title {
@@ -22,13 +25,15 @@
 
         .grid {
             display: grid;
-            grid-template-columns: auto auto;
+            grid-template-columns: 1fr 1fr;
             grid-column-gap: 16px;
         }
 
         .img {
             cursor: pointer;
             transition: 0.5s;
+            object-fit: contain;
+            max-height: 80vh;
         }
 
         .img:hover {
@@ -36,25 +41,82 @@
             opacity: 0.5;
         }
 
+        .certificate {
+            max-width: 600px;
+        }
+
+        .result {
+            text-align: center;
+            font-size: 68px;
+            line-height: 62px;
+            animation: blinking 0.5s linear infinite alternate;
+        }
+
+        @keyframes blinking {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        .unicron {
+            margin-top: 20vh;
+            display: none;
+        }
+
+        .certificate {
+            align-content: center;
+        }
+
+        #startbtn {
+           margin-top: 30vh;
+            font-size: 72px;
+            color: #98D2C5;
+            border-color: #98D2C5;
+        }
+
+        #startbtn:hover {
+            background-color: #EC9AC1;
+            color: white;
+            border-color: rgba(255, 255, 255, 0);
+        }
+
+
     </style>
 
 </head>
+
 <body>
 
 <div class="darkTheme">
-    <div class="container">
-        <div class="main-title text-align-center">
-            <h2>Birthday Master</h2>
-        </div>
+    <div class="container-fluid">
 
         <div class="pictures grid">
             <img class="img" id="img1" width="100%" alt="" onclick="selectWish('first')">
             <img class="img" id="img2" width="100%" alt="" onclick="selectWish('second')">
         </div>
 
-        <button id="startbtn" onclick="start()"> click</button>
+        <div class="d-flex justify-content-center">
+            <button class="btn btn-outline-warning" id="startbtn" onclick="start()">
+                Нажми меня
+            </button>
+        </div>
 
-        <div id="result"></div>
+
+        <div class="unicron ">
+            <div class=" d-flex justify-content-center" id="starshine">
+                <div class="template shine"></div>
+                <div class="certificate">
+                    <img src="svg/certificate3.svg" alt="">
+                    <div class="result" id="result">Ticket for somewhere</div>
+                </div>
+            </div>
+        </div>
+
+
     </div>
 
 </div>
@@ -70,135 +132,8 @@
         integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
         crossorigin="anonymous"></script>
 
-<script>
-
-
-    let wishes =
-        [
-            {
-                code: "ticket",
-                description: "Ticket to any place",
-            },
-            {
-                code: "parachute",
-                description: "Parachute jump",
-            },
-            {
-                code: "laptop",
-                description: "New laptop",
-            },
-            {
-                code: "microphone",
-                description: "Professional microphone",
-            },
-            {
-                code: "license",
-                description: "Driving license"
-            },
-            {
-                code: "studio",
-                description: "Video studio toolkit",
-            },
-            {
-                code: "vocal",
-                description: "Vocal course",
-            },
-            {
-                code: "makeup",
-                description: "Make up course",
-            },
-            {
-                code: "ikea",
-                description: "15k in Ikea",
-            },
-            {
-                code: "wine",
-                description: "Toolkit for craft wine",
-            }
-        ]
-
-    let storedWishes = []
-    let imageSet = 1
-    let pointer = 0
-    let decision = null
-
-    let finalResult = null
-
-    let start = () => {
-        document.getElementById("startbtn").style.display = "none"
-        generateImages(wishes)
-    }
-
-    let checkImageExist = (image_url) => {
-        let http = new XMLHttpRequest();
-        http.open('HEAD', image_url, false);
-        http.send();
-        return http.status !== 404;
-    }
-
-    let generateImage = (wish, pointer, id) => {
-        let url = `img/${wish[pointer].code + imageSet}.`
-        if (checkImageExist(url + "jpg")) {
-            document.getElementById(id).src = url + "jpg"
-        } else {
-            document.getElementById(id).src = url + "png"
-        }
-    }
-
-    let generateImages = (wish) => {
-        console.log(wish, pointer, imageSet)
-        generateImage(wish, pointer, "img1")
-        generateImage(wish, pointer + 1, "img2")
-    }
-
-    let storeDecision = (wish, storeWish) => {
-        if (decision === "first") {
-            storeWish.push(wish[pointer])
-        }
-        if (decision === "second") {
-            storeWish.push(wish[pointer + 1])
-        }
-    }
-
-    let storeCustomDecision = (wish, storeWish, customPointer) => {
-        storeWish.push(wish[customPointer])
-    }
-
-    let startSets = () => {
-        if (decision !== null) {
-            storeDecision(wishes, storedWishes)
-            pointer = pointer + 2
-        }
-
-        if (wishes.length-2 === -1) {
-            finalResult = wishes[0].description
-            document.getElementById("result").innerHTML=`${finalResult}`
-            return
-        }
-
-        if (pointer > wishes.length - 2) {
-            if (wishes.length % 2 !== 0) {
-                storeCustomDecision(wishes, storedWishes, wishes.length - 1)
-            }
-            imageSet = imageSet + 1
-            pointer = 0
-            decision = null
-            wishes = storedWishes
-            storedWishes = []
-            startSets()
-        } else {
-            generateImages(wishes)
-        }
-
-    }
-
-    let selectWish = (pickedDecision) => {
-        decision = pickedDecision
-        startSets()
-    }
-
-
-</script>
+<script src="wishMasterEngine.js"></script>
+<script src="spark/spark.js"></script>
 
 </body>
 </html>
