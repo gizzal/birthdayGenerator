@@ -63,6 +63,7 @@ let checkImageExist = (image_url) => {
 }
 
 let generateImage = (wish, pointer, id) => {
+    document.getElementById(id).src = ""
     let url = `img/${wish[pointer].code + imageSet}.`
     if (checkImageExist(url + "jpg")) {
         document.getElementById(id).src = url + "jpg"
